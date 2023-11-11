@@ -1,0 +1,83 @@
+.teacherItem {
+	background: #252527;
+	border-radius: 46px;
+	padding: 17px 60px 29px 60px;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 20px;
+	position: relative;
+}
+
+.keys {
+	display: flex;
+	flex-direction: column;
+	gap: 13px;
+}
+
+.values {
+	display: flex;
+	flex-direction: column;
+	gap: 13px;
+	text-align: end;
+}
+
+.keys span {
+	color: #fff;
+	font-size: 20px;
+	font-weight: 400;
+	display: inline-block;
+	position: relative;
+}
+
+.keys span::after {
+	content: "";
+	display: inline-block;
+	height: 1px;
+	width: 55px;
+	background-color: #7572d5;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	transform: translateY(7px);
+}
+
+.values span {
+	color: #fff;
+	font-size: 20px;
+	font-weight: 400;
+}
+
+.alternative {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.8);
+	border-radius: 46px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 70px;
+}
+
+.alternative button img {
+	width: 50px;
+	height: 50px;
+	background: transparent;
+}
+
+.alternative button {
+	background: transparent;
+	border: none;
+	cursor: pointer;
+}
+
+.invisible {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	cursor: pointer;
+}

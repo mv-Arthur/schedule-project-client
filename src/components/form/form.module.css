@@ -1,0 +1,45 @@
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	align-items: center;
+}
+
+.form input {
+	width: 540px;
+	height: 32px;
+	border: 1px solid #4a4a4a;
+	background: #252527;
+	padding-left: 15px;
+	color: #fff;
+}
+
+.form button {
+	border: none;
+	background: transparent;
+	color: #fff;
+	text-align: center;
+	font-size: 14px;
+	font-weight: 400;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	cursor: pointer;
+	position: relative;
+}
+
+.form button::after {
+	content: "";
+	display: inline-block;
+	position: absolute;
+	width: 77px;
+	height: 10px;
+	background-color: #7572d5;
+	bottom: 0;
+	right: 0;
+	z-index: -1;
+	transform: translateY(2px);
+}
+
+.form span {
+	color: #7572d5;
+}

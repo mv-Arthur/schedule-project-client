@@ -1,0 +1,27 @@
+.teachersGl {
+	position: relative;
+	height: 100vh;
+}
+
+.teachersArea {
+	margin-top: 41px;
+}
+.itemWrapper {
+	height: 50vh;
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding-right: 15px;
+}
+
+.itemWrapper::-webkit-scrollbar {
+	width: 3px;
+}
+
+.itemWrapper::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.itemWrapper::-webkit-scrollbar-thumb {
+	background-color: #7572d5;
+	border-radius: 20px;
+}

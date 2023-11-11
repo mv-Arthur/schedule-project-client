@@ -1,0 +1,47 @@
+.title {
+	color: #fff;
+	font-size: 50px;
+	font-weight: 700;
+	letter-spacing: 2.5px;
+	display: inline-block;
+	position: relative;
+}
+
+.header {
+	position: relative;
+}
+
+.title::after {
+	content: "";
+	width: 311px;
+	height: 20px;
+	background-color: #7572d5;
+	display: inline-block;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	z-index: -1;
+	transform: translate(18px, -1px);
+}
+.burger {
+	width: 36px;
+	height: 20px;
+	position: absolute;
+	display: flex;
+	top: 60px;
+	right: 95px;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 7px;
+}
+
+.child {
+	height: 2px;
+	width: 36px;
+	background-color: #fff;
+	display: inline-block;
+}
+
+.child:last-child {
+	width: 23px;
+}
