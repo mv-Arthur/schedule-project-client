@@ -11,9 +11,10 @@ import { CustomForm } from "../form/CustomForm";
 type TeacherItemPropsType = {
 	teacher: TeacherType;
 	deleteTeacherCB: (teacherId: number) => void;
+	editTeacherCB: (teacherId: number, updatedData: TeacherType) => void;
 };
 
-export const TeacherItem = ({ teacher, deleteTeacherCB }: TeacherItemPropsType) => {
+export const TeacherItem = ({ teacher, deleteTeacherCB, editTeacherCB }: TeacherItemPropsType) => {
 	const [popup, setPopup] = React.useState(false);
 	const [show, setShow] = React.useState(false);
 	const parent = React.useRef(null);
@@ -36,7 +37,7 @@ export const TeacherItem = ({ teacher, deleteTeacherCB }: TeacherItemPropsType) 
 	return (
 		<div className={classes.teacherItem} ref={parent}>
 			<Modal show={show} setShow={setShow}>
-				<CustomForm teacherId={teacher.id} />
+				<CustomForm teacher={teacher} editTeachersFromCB={editTeacherCB} onShow={onShow} />
 			</Modal>
 			{!popup && <div className={classes.invisible} onClick={onPopup}></div>}
 			<div className={classes.keys}>

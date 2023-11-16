@@ -12,11 +12,12 @@ type Inputs = {
 
 type CustomFormPropsType = {
 	setTeachersFromCB?: (formData: TeacherType) => void;
-	editTeachersFromCB?: () => void;
-	teacherId?: number;
+	editTeachersFromCB?: (teacherId: number, updatedData: TeacherType) => void;
+	teacher?: TeacherType;
+	onShow?: () => void;
 };
 
-export const CustomForm = ({ setTeachersFromCB, editTeachersFromCB, teacherId }: CustomFormPropsType) => {
+export const CustomForm = ({ setTeachersFromCB, editTeachersFromCB, teacher, ...props }: CustomFormPropsType) => {
 	const {
 		register,
 		handleSubmit,
@@ -32,10 +33,10 @@ export const CustomForm = ({ setTeachersFromCB, editTeachersFromCB, teacherId }:
 	});
 
 	React.useEffect(() => {
-		if (editTeachersFromCB && teacherId) {
-			setValue("name", "dwad");
-			setValue("surname", "dawdaf2");
-			setValue("patronimyc", "wdqdwq3");
+		if (teacher && editTeachersFromCB) {
+			setValue("name", teacher.name);
+			setValue("surname", teacher.surname);
+			setValue("patronimyc", teacher.patronimyc);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -50,8 +51,18 @@ export const CustomForm = ({ setTeachersFromCB, editTeachersFromCB, teacherId }:
 				delete fetchingData.data.updatedAt;
 				setTeachersFromCB(fetchingData.data);
 				reset();
-			} catch (e) {
-				console.log(e);
+			} catch (err) {
+				console.log(err);
+			}
+		}
+		if (editTeachersFromCB && teacher) {
+			try {
+				const updatedData = await axios.put(`http://localhost:5000/teacher/${teacher.id}`, { ...data });
+				editTeachersFromCB(teacher.id, { ...data, id: teacher.id });
+				props.onShow && props.onShow();
+				console.log(updatedData);
+			} catch (err) {
+				console.log(err);
 			}
 		}
 	};
