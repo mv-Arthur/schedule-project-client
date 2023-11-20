@@ -4,7 +4,6 @@ import { TeacherType } from "../../pages/teachers/Teachers";
 import deleteIcon from "../../images/deleteico.svg";
 import updateIcon from "../../images/updateico.svg";
 import closeIcon from "../../images/closeico.svg";
-import autoAnimate from "@formkit/auto-animate";
 import { Modal } from "../modal/Modal";
 import { CustomForm } from "../form/CustomForm";
 
@@ -14,20 +13,15 @@ type TeacherItemPropsType = {
 	editTeacherCB: (teacherId: number, updatedData: TeacherType) => void;
 };
 
-export const TeacherItem = ({ teacher, deleteTeacherCB, editTeacherCB }: TeacherItemPropsType) => {
+export const TeacherItem: React.FC<TeacherItemPropsType> = (props: TeacherItemPropsType) => {
 	const [popup, setPopup] = React.useState(false);
 	const [show, setShow] = React.useState(false);
-	const parent = React.useRef(null);
-
-	React.useEffect(() => {
-		parent.current && autoAnimate(parent.current);
-	}, [parent]);
 	const onPopup = () => {
 		setPopup(!popup);
 	};
 
 	const onDelete = () => {
-		deleteTeacherCB(teacher.id);
+		props.deleteTeacherCB(props.teacher.id);
 	};
 
 	const onShow = () => {
@@ -35,9 +29,9 @@ export const TeacherItem = ({ teacher, deleteTeacherCB, editTeacherCB }: Teacher
 	};
 
 	return (
-		<div className={classes.teacherItem} ref={parent}>
+		<div className={classes.teacherItem}>
 			<Modal show={show} setShow={setShow}>
-				<CustomForm teacher={teacher} editTeachersFromCB={editTeacherCB} onShow={onShow} />
+				<CustomForm teacher={props.teacher} editTeachersFromCB={props.editTeacherCB} onShow={onShow} />
 			</Modal>
 			{!popup && <div className={classes.invisible} onClick={onPopup}></div>}
 			<div className={classes.keys}>
@@ -46,9 +40,9 @@ export const TeacherItem = ({ teacher, deleteTeacherCB, editTeacherCB }: Teacher
 				<span>Отчество</span>
 			</div>
 			<div className={classes.values}>
-				<span>{teacher.name}</span>
-				<span>{teacher.surname}</span>
-				<span>{teacher.patronimyc}</span>
+				<span>{props.teacher.name}</span>
+				<span>{props.teacher.surname}</span>
+				<span>{props.teacher.patronimyc}</span>
 			</div>
 			{popup && (
 				<div className={classes.alternative}>

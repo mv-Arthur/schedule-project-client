@@ -5,10 +5,10 @@ import close from "../../images/closeico.svg";
 type ModalPropsType = {
 	children: ReactNode;
 	show: boolean;
-	setShow: (show: boolean) => void;
+	setShow: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const Modal = (props: ModalPropsType) => {
+export const Modal: React.FC<ModalPropsType> = (props: ModalPropsType) => {
 	return (
 		<>
 			{props.show && (

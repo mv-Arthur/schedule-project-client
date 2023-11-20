@@ -14,32 +14,6 @@
 	color: #fff;
 }
 
-.form button {
-	border: none;
-	background: transparent;
-	color: #fff;
-	text-align: center;
-	font-size: 14px;
-	font-weight: 400;
-	letter-spacing: 1px;
-	text-transform: uppercase;
-	cursor: pointer;
-	position: relative;
-}
-
-.form button::after {
-	content: "";
-	display: inline-block;
-	position: absolute;
-	width: 77px;
-	height: 10px;
-	background-color: #7572d5;
-	bottom: 0;
-	right: 0;
-	z-index: -1;
-	transform: translateY(2px);
-}
-
 .form span {
 	color: #7572d5;
 }

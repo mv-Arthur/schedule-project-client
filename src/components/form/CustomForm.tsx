@@ -1,23 +1,23 @@
 import React from "react";
 import classes from "./form.module.css";
 import { useForm, SubmitHandler } from "react-hook-form";
-import axios from "axios";
+
 import { TeacherType } from "../../pages/teachers/Teachers";
 
-type Inputs = {
+export type Inputs = {
 	name: string;
 	surname: string;
 	patronimyc: string;
 };
 
 type CustomFormPropsType = {
-	setTeachersFromCB?: (formData: TeacherType) => void;
+	setTeachersFromCB?: (formData: Inputs) => void;
 	editTeachersFromCB?: (teacherId: number, updatedData: TeacherType) => void;
 	teacher?: TeacherType;
 	onShow?: () => void;
 };
 
-export const CustomForm = ({ setTeachersFromCB, editTeachersFromCB, teacher, ...props }: CustomFormPropsType) => {
+export const CustomForm: React.FC<CustomFormPropsType> = (props: CustomFormPropsType) => {
 	const {
 		register,
 		handleSubmit,
@@ -33,37 +33,22 @@ export const CustomForm = ({ setTeachersFromCB, editTeachersFromCB, teacher, ...
 	});
 
 	React.useEffect(() => {
-		if (teacher && editTeachersFromCB) {
-			setValue("name", teacher.name);
-			setValue("surname", teacher.surname);
-			setValue("patronimyc", teacher.patronimyc);
+		if (props.teacher && props.editTeachersFromCB) {
+			setValue("name", props.teacher.name);
+			setValue("surname", props.teacher.surname);
+			setValue("patronimyc", props.teacher.patronimyc);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		if (setTeachersFromCB) {
-			try {
-				const fetchingData = await axios.post("http://localhost:5000/teacher", {
-					...data,
-				});
-				delete fetchingData.data.createdAt;
-				delete fetchingData.data.updatedAt;
-				setTeachersFromCB(fetchingData.data);
-				reset();
-			} catch (err) {
-				console.log(err);
-			}
+	const onSubmit: SubmitHandler<Inputs> = (data) => {
+		if (props.setTeachersFromCB) {
+			props.setTeachersFromCB(data);
+			reset();
 		}
-		if (editTeachersFromCB && teacher) {
-			try {
-				const updatedData = await axios.put(`http://localhost:5000/teacher/${teacher.id}`, { ...data });
-				editTeachersFromCB(teacher.id, { ...data, id: teacher.id });
-				props.onShow && props.onShow();
-				console.log(updatedData);
-			} catch (err) {
-				console.log(err);
-			}
+		if (props.editTeachersFromCB && props.teacher) {
+			props.editTeachersFromCB(props.teacher.id, { ...data, id: props.teacher.id });
+			props.onShow && props.onShow();
 		}
 	};
 
@@ -77,7 +62,7 @@ export const CustomForm = ({ setTeachersFromCB, editTeachersFromCB, teacher, ...
 
 				<input type="text" placeholder="отчество" {...register("patronimyc", { required: true })} />
 				{errors.patronimyc && <span>поле обязательно для заполнения</span>}
-				<input type="submit" />
+				<input type="submit" value={props.setTeachersFromCB ? "отправить" : "редактировать"} />
 			</form>
 		</div>
 	);

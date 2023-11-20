@@ -2,10 +2,10 @@ import React from "react";
 import { Header } from "../../components/Header/Header";
 import classes from "./teachers.module.css";
 import { TeacherItem } from "../../components/teacherItem/TeacherItem";
-import { CustomForm } from "../../components/form/CustomForm";
+import { CustomForm, Inputs } from "../../components/form/CustomForm";
 import axios from "axios";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { SideBar } from "../../components/sidebar/SideBar";
+
 export type TeacherType = {
 	id: number;
 	name: string;
@@ -13,25 +13,34 @@ export type TeacherType = {
 	patronimyc: string;
 };
 
-export const Teachers = () => {
+export const Teachers: React.FC = () => {
 	const [teachers, setTeachers] = React.useState<TeacherType[]>([]);
 	const [parent] = useAutoAnimate();
 	React.useEffect(() => {
-		const fetchTeachers = async () => {
-			const data: TeacherType[] = (await axios.get("http://localhost:5000/teacher")).data;
-			setTeachers([...data].reverse());
-		};
-		fetchTeachers();
+		(async () => {
+			try {
+				const data: TeacherType[] = (await axios.get("http://localhost:5000/teacher")).data;
+				setTeachers([...data].reverse());
+			} catch (err) {
+				console.log(err);
+			}
+		})();
 	}, []);
 
-	const setTeachersFromCB = (formData: TeacherType) => {
-		setTeachers([formData, ...teachers]);
+	const setTeachersFromCB = async (formData: Inputs) => {
+		try {
+			const fetchingData = await axios.post("http://localhost:5000/teacher", {
+				...formData,
+			});
+			setTeachers([fetchingData.data, ...teachers]);
+		} catch (err) {
+			console.log(err);
+		}
 	};
 
 	const deleteTeacherCB = async (teacherId: number) => {
 		try {
-			const deletedTeacherId = await axios.delete(`http://localhost:5000/teacher/${teacherId}`);
-			console.log(deletedTeacherId);
+			await axios.delete(`http://localhost:5000/teacher/${teacherId}`);
 			setTeachers(teachers.filter((el) => el.id !== teacherId));
 		} catch (err) {
 			console.log(err);
@@ -39,13 +48,17 @@ export const Teachers = () => {
 	};
 
 	const editTeacherCB = async (teacherId: number, updatedData: TeacherType) => {
-		setTeachers(teachers.map((el) => (el.id === teacherId ? { ...updatedData } : el)));
+		try {
+			await axios.put(`http://localhost:5000/teacher/${teacherId}`, { ...updatedData });
+			setTeachers(teachers.map((el) => (el.id === teacherId ? { ...updatedData } : el)));
+		} catch (err) {
+			console.log(err);
+		}
 	};
 
 	return (
 		<div className={classes.teachersGl}>
-			{/* <SideBar /> */}
-			<Header />
+			<Header title="Преподаватели" />
 			<CustomForm setTeachersFromCB={setTeachersFromCB} />
 			<div className={classes.teachersArea}>
 				<div className="container">
