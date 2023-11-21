@@ -1,5 +1,5 @@
 .teacherItem {
-	background: #252527;
+	background: rgb(243, 246, 249);
 	border-radius: 46px;
 	padding: 17px 60px 29px 60px;
 	display: flex;
@@ -22,7 +22,7 @@
 }
 
 .keys span {
-	color: #fff;
+	color: rgb(25, 118, 210);
 	font-size: 20px;
 	font-weight: 400;
 	display: inline-block;
@@ -34,7 +34,7 @@
 	display: inline-block;
 	height: 1px;
 	width: 55px;
-	background-color: #7572d5;
+	background-color: rgb(25, 118, 210);
 	position: absolute;
 	bottom: 0;
 	left: 0;
@@ -42,7 +42,7 @@
 }
 
 .values span {
-	color: #fff;
+	color: rgb(25, 118, 210);
 	font-size: 20px;
 	font-weight: 400;
 }

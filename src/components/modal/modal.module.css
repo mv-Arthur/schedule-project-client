@@ -14,7 +14,7 @@
 .modal {
 	min-width: 400px;
 	min-height: 400px;
-	background-color: #252527;
+	background-color: #fff;
 	border-radius: 15px;
 	position: relative;
 	display: flex;
@@ -22,7 +22,7 @@
 	align-items: center;
 }
 
-.modal button {
+.close {
 	background: transparent;
 	border: none;
 	cursor: pointer;

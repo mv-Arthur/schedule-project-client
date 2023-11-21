@@ -1,9 +1,9 @@
 import React from "react";
 import classes from "./form.module.css";
 import { useForm, SubmitHandler } from "react-hook-form";
-
+import TextField from "@mui/material/TextField";
 import { TeacherType } from "../../pages/teachers/Teachers";
-
+import Button from "@mui/material/Button";
 export type Inputs = {
 	name: string;
 	surname: string;
@@ -55,14 +55,31 @@ export const CustomForm: React.FC<CustomFormPropsType> = (props: CustomFormProps
 	return (
 		<div className="container">
 			<form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
-				<input type="text" placeholder="фамилия" {...register("surname", { required: true })} />
-				{errors.surname && <span>поле обязательно для заполнения</span>}
-				<input type="text" placeholder="имя" {...register("name", { required: true })} />
-				{errors.name && <span>поле обязательно для заполнения</span>}
+				<TextField
+					variant="outlined"
+					error={Boolean(errors.surname)}
+					label={errors.surname ? "поле обязательно для заполнения" : "фамилия"}
+					{...register("name", { required: true })}
+					{...register("surname", { required: true })}
+				/>
 
-				<input type="text" placeholder="отчество" {...register("patronimyc", { required: true })} />
-				{errors.patronimyc && <span>поле обязательно для заполнения</span>}
-				<input type="submit" value={props.setTeachersFromCB ? "отправить" : "редактировать"} />
+				<TextField
+					variant="outlined"
+					error={Boolean(errors.name)}
+					label={errors.name ? "поле обязательно для заполнения" : "имя"}
+					{...register("name", { required: true })}
+				/>
+
+				<TextField
+					variant="outlined"
+					error={Boolean(errors.patronimyc)}
+					label={errors.patronimyc ? "поле обязательно для заполнения" : "отчество"}
+					{...register("patronimyc", { required: true })}
+				/>
+
+				<Button type="submit" variant="contained">
+					{props.setTeachersFromCB ? "создать" : "редактировать"}
+				</Button>
 			</form>
 		</div>
 	);

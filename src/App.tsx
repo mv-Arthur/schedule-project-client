@@ -6,7 +6,7 @@ function App() {
 	return (
 		<div className="App">
 			<Routes>
-				<Route path={"/"} element={<Teachers />} />
+				<Route path={"/teacher"} element={<Teachers />} />
 				<Route path={"/discipline"} element={<div>здесь отобразиться дисциплина</div>} />
 			</Routes>
 		</div>

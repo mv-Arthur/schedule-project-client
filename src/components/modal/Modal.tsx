@@ -14,7 +14,7 @@ export const Modal: React.FC<ModalPropsType> = (props: ModalPropsType) => {
 			{props.show && (
 				<div className={classes.outside}>
 					<div className={classes.modal}>
-						<button onClick={() => props.setShow(!props.show)}>
+						<button className={classes.close} onClick={() => props.setShow(!props.show)}>
 							<img src={close} alt="close" />
 						</button>
 						{props.children}
