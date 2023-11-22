@@ -5,7 +5,7 @@ import { TeacherItem } from "../../components/teacherItem/TeacherItem";
 import { CustomForm, Inputs } from "../../components/form/CustomForm";
 import axios from "axios";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-
+import Container from "@mui/material/Container";
 export type TeacherType = {
 	id: number;
 	name: string;
@@ -59,16 +59,16 @@ export const Teachers: React.FC = () => {
 	return (
 		<div className={classes.teachersGl}>
 			<Header title="Преподаватели" />
-			<CustomForm setTeachersFromCB={setTeachersFromCB} />
-			<div className={classes.teachersArea}>
-				<div className="container">
+			<Container>
+				<CustomForm setTeachersFromCB={setTeachersFromCB} />
+				<div className={classes.teachersArea}>
 					<div className={classes.itemWrapper} ref={parent}>
 						{teachers.map((el) => {
 							return <TeacherItem key={el.id} teacher={el} deleteTeacherCB={deleteTeacherCB} editTeacherCB={editTeacherCB} />;
 						})}
 					</div>
 				</div>
-			</div>
+			</Container>
 		</div>
 	);
 };

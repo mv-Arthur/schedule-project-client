@@ -12,7 +12,7 @@ type HeaderPropsType = {
 
 export const Header: React.FC<HeaderPropsType> = (props: HeaderPropsType) => {
 	return (
-		<Box sx={{ flexGrow: 1 }}>
+		<Box sx={{ flexGrow: 1 }} style={{ marginBottom: 30 }}>
 			<AppBar position="static">
 				<Toolbar>
 					<IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>

@@ -53,34 +53,32 @@ export const CustomForm: React.FC<CustomFormPropsType> = (props: CustomFormProps
 	};
 
 	return (
-		<div className="container">
-			<form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
-				<TextField
-					variant="outlined"
-					error={Boolean(errors.surname)}
-					label={errors.surname ? "поле обязательно для заполнения" : "фамилия"}
-					{...register("name", { required: true })}
-					{...register("surname", { required: true })}
-				/>
+		<form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
+			<TextField
+				variant="outlined"
+				error={Boolean(errors.surname)}
+				label={errors.surname ? "поле обязательно для заполнения" : "фамилия"}
+				{...register("name", { required: true })}
+				{...register("surname", { required: true })}
+			/>
 
-				<TextField
-					variant="outlined"
-					error={Boolean(errors.name)}
-					label={errors.name ? "поле обязательно для заполнения" : "имя"}
-					{...register("name", { required: true })}
-				/>
+			<TextField
+				variant="outlined"
+				error={Boolean(errors.name)}
+				label={errors.name ? "поле обязательно для заполнения" : "имя"}
+				{...register("name", { required: true })}
+			/>
 
-				<TextField
-					variant="outlined"
-					error={Boolean(errors.patronimyc)}
-					label={errors.patronimyc ? "поле обязательно для заполнения" : "отчество"}
-					{...register("patronimyc", { required: true })}
-				/>
+			<TextField
+				variant="outlined"
+				error={Boolean(errors.patronimyc)}
+				label={errors.patronimyc ? "поле обязательно для заполнения" : "отчество"}
+				{...register("patronimyc", { required: true })}
+			/>
 
-				<Button type="submit" variant="contained">
-					{props.setTeachersFromCB ? "создать" : "редактировать"}
-				</Button>
-			</form>
-		</div>
+			<Button type="submit" variant="contained">
+				{props.setTeachersFromCB ? "создать" : "редактировать"}
+			</Button>
+		</form>
 	);
 };
