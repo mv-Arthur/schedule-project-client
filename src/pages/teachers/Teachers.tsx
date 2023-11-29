@@ -64,7 +64,7 @@ export const Teachers: React.FC = () => {
 				<div className={classes.teachersArea}>
 					<div className={classes.itemWrapper} ref={parent}>
 						{teachers.map((el) => {
-							return <TeacherItem key={el.id} teacher={el} deleteTeacherCB={deleteTeacherCB} editTeacherCB={editTeacherCB} />;
+							return <TeacherItem full key={el.id} teacher={el} deleteTeacherCB={deleteTeacherCB} editTeacherCB={editTeacherCB} />;
 						})}
 					</div>
 				</div>

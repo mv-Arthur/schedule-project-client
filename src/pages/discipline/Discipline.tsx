@@ -8,6 +8,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
+import Alert, { AlertProps } from "@mui/material/Alert";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
 	GridRowsProp,
 	GridRowModesModel,
@@ -22,47 +24,12 @@ import {
 	GridRowEditStopReasons,
 } from "@mui/x-data-grid";
 
-import { useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import axios from "axios";
-
-const initialRows: GridRowsProp = [
-	{
-		id: 321,
-		name: "Математика",
-		hoursQtyFirstSemester: 14,
-		hoursQtySecondSemester: 15,
-		allHours: 29,
-		weeklyLoadSecondWeek: 3,
-		weeklyLoadFirstWeek: 2,
-	},
-	{
-		id: 442,
-		name: "Английский язык",
-		hoursQtyFirstSemester: 14,
-		hoursQtySecondSemester: 15,
-		allHours: 29,
-		weeklyLoadSecondWeek: 3,
-		weeklyLoadFirstWeek: 2,
-	},
-	{
-		id: 432,
-		name: "Физика",
-		hoursQtyFirstSemester: 14,
-		hoursQtySecondSemester: 15,
-		allHours: 29,
-		weeklyLoadSecondWeek: 3,
-		weeklyLoadFirstWeek: 2,
-	},
-	{
-		id: 543,
-		name: "Физ культура",
-		hoursQtyFirstSemester: 14,
-		hoursQtySecondSemester: 15,
-		allHours: 29,
-		weeklyLoadSecondWeek: 3,
-		weeklyLoadFirstWeek: 2,
-	},
-];
+import Snackbar from "@mui/material/Snackbar";
+import { TeacherItem } from "../../components/teacherItem/TeacherItem";
+import { TeacherType } from "../teachers/Teachers";
+const initialRows: GridRowsProp = [];
 
 interface EditToolbarProps {
 	setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -111,6 +78,11 @@ function EditToolbar(props: EditToolbarProps) {
 
 	return (
 		<GridToolbarContainer>
+			<Button color="primary" startIcon={<ArrowBackIcon />}>
+				<NavLink style={{ color: "rgb(25, 118, 210)", textDecoration: "none" }} to="/teacher">
+					Назад
+				</NavLink>
+			</Button>
 			<Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
 				Добавить
 			</Button>
@@ -120,16 +92,29 @@ function EditToolbar(props: EditToolbarProps) {
 
 export const Discipline = () => {
 	const dynamicParam = useParams();
-
+	const [teacher, setTeacher] = React.useState<TeacherType>({
+		id: 0,
+		name: "",
+		surname: "",
+		patronimyc: "",
+	});
 	const [rows, setRows] = React.useState(initialRows);
 	const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
-
+	const [snackbar, setSnackbar] = React.useState<Pick<AlertProps, "children" | "severity"> | null>(null);
 	React.useEffect(() => {
 		(async () => {
 			try {
 				const teacherId = dynamicParam.id;
 				const disciplines = (await axios.get(`http://localhost:5000/discipline/${teacherId}`)).data;
 				setRows(disciplines);
+			} catch (err) {
+				console.log(err);
+			}
+			try {
+				const teacherId = dynamicParam.id;
+				const teacher = (await axios.get(`http://localhost:5000/teacher/${teacherId}`)).data;
+				setTeacher(teacher);
+				console.log(teacher);
 			} catch (err) {
 				console.log(err);
 			}
@@ -173,12 +158,8 @@ export const Discipline = () => {
 	};
 
 	const processRowUpdate = async (newRow: GridRowModel) => {
-		try {
-			await axios.put(`http://localhost:5000/discipline/${newRow.id}`, newRow);
-		} catch (err) {
-			console.log(err);
-			return;
-		}
+		await axios.put(`http://localhost:5000/discipline/${newRow.id}`, newRow);
+		setSnackbar({ children: "User successfully saved", severity: "success" });
 		const d = (await axios.get(`http://localhost:5000/discipline/${dynamicParam.id}/${newRow.id}`)).data;
 		const updatedRow = { ...d, isNew: false };
 		setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
@@ -188,6 +169,11 @@ export const Discipline = () => {
 	const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
 		setRowModesModel(newRowModesModel);
 	};
+
+	const handleCloseSnackbar = () => setSnackbar(null);
+	const handleProcessRowUpdateError = React.useCallback((error: Error) => {
+		setSnackbar({ children: error.message, severity: "error" });
+	}, []);
 
 	const columns: GridColDef[] = [
 		{ field: "name", headerName: "Название предмета", width: 200, editable: true },
@@ -264,6 +250,7 @@ export const Discipline = () => {
 		<>
 			<Header title="Дисциплины" />
 			<Container>
+				<TeacherItem teacher={teacher} />
 				<Box
 					sx={{
 						height: "80vh",
@@ -284,6 +271,7 @@ export const Discipline = () => {
 						onRowModesModelChange={handleRowModesModelChange}
 						onRowEditStop={handleRowEditStop}
 						processRowUpdate={processRowUpdate}
+						onProcessRowUpdateError={handleProcessRowUpdateError}
 						slots={{
 							toolbar: EditToolbar,
 						}}
@@ -291,6 +279,11 @@ export const Discipline = () => {
 							toolbar: { setRows, setRowModesModel, teacherId: dynamicParam.id },
 						}}
 					/>
+					{!!snackbar && (
+						<Snackbar open anchorOrigin={{ vertical: "bottom", horizontal: "center" }} onClose={handleCloseSnackbar} autoHideDuration={6000}>
+							<Alert {...snackbar} onClose={handleCloseSnackbar} />
+						</Snackbar>
+					)}
 				</Box>
 			</Container>
 		</>
