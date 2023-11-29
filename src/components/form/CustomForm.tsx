@@ -58,7 +58,6 @@ export const CustomForm: React.FC<CustomFormPropsType> = (props: CustomFormProps
 				variant="outlined"
 				error={Boolean(errors.surname)}
 				label={errors.surname ? "поле обязательно для заполнения" : "фамилия"}
-				{...register("name", { required: true })}
 				{...register("surname", { required: true })}
 			/>
 

@@ -1,0 +1,19 @@
+.itemWrapper {
+	height: 45vh;
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding-right: 15px;
+}
+
+.itemWrapper::-webkit-scrollbar {
+	width: 3px;
+}
+
+.itemWrapper::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.itemWrapper::-webkit-scrollbar-thumb {
+	background-color: rgb(25, 118, 210);
+	border-radius: 20px;
+}
