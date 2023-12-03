@@ -2,3 +2,25 @@
 	display: flex;
 	justify-content: flex-end;
 }
+.attachedWrapper {
+	margin-top: 41px;
+}
+.attachedWrapper {
+	height: 45vh;
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding-right: 15px;
+}
+
+.attachedWrapper::-webkit-scrollbar {
+	width: 3px;
+}
+
+.attachedWrapper::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.attachedWrapper::-webkit-scrollbar-thumb {
+	background-color: rgb(25, 118, 210);
+	border-radius: 20px;
+}

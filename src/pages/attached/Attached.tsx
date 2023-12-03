@@ -10,24 +10,27 @@ import classes from "./attached.module.css";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import { TeacherType } from "../teachers/Teachers";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
+import { AttachedItem } from "../../components/attachedItem/AttachedItem";
 
 type DisciplineType = {
-	allHours: 5;
-	attachedDisciplineId: 12;
-	hoursQtyFirstSemester: 4;
-	hoursQtySecondSemester: 1;
-	id: 1;
-	name: "Английский язык";
-	teacherId: 1;
-	weeklyLoadFirstWeek: 123;
-	weeklyLoadSecondWeek: 4;
+	allHours: number;
+	attachedDisciplineId: number;
+	hoursQtyFirstSemester: number;
+	hoursQtySecondSemester: number;
+	id: number;
+	name: string;
+	teacherId: number;
+	weeklyLoadFirstWeek: number;
+	weeklyLoadSecondWeek: number;
 };
 
+export type AttachedType = {
+	discipline: DisciplineType;
+	teacher: TeacherType;
+};
 export const Attached: React.FC = () => {
 	const [group, setGroup] = React.useState<GroupType>({
 		id: 0,
@@ -40,11 +43,34 @@ export const Attached: React.FC = () => {
 	const [changedTeacher, setChangedTeacher] = React.useState<TeacherType>();
 	const [disciplinesOfTeacher, setDisciplinesOfTeacher] = React.useState<DisciplineType[]>([]);
 	const [changedDiscipline, setChangedDiscipline] = React.useState<DisciplineType>();
+	const [attached, setAttached] = React.useState<AttachedType[]>([
+		// {
+		// 	teacher: {
+		// 		id: 1,
+		// 		name: "",
+		// 		surname: "",
+		// 		patronimyc: "",
+		// 	},
+		// 	discipline: {
+		// 		allHours: 1,
+		// 		attachedDisciplineId: 1,
+		// 		hoursQtyFirstSemester: 1,
+		// 		hoursQtySecondSemester: 1,
+		// 		id: 1,
+		// 		name: "",
+		// 		teacherId: 1,
+		// 		weeklyLoadFirstWeek: 1,
+		// 		weeklyLoadSecondWeek: 1,
+		// 	},
+		// },
+	]);
 	const groupId = useParams().id;
 	React.useEffect(() => {
 		(async () => {
 			try {
 				const data = (await axios.get(`http://localhost:5000/group/${groupId}`)).data;
+				console.log(data);
+				// setAttached([...attached, ...data.disciplines]);
 				setGroup(data);
 			} catch (err) {
 				console.log(err);
@@ -52,6 +78,10 @@ export const Attached: React.FC = () => {
 			try {
 				const tData = (await axios.get(`http://localhost:5000/teacher`)).data;
 				setTeachers(tData);
+			} catch (err) {
+				console.log(err);
+			}
+			try {
 			} catch (err) {
 				console.log(err);
 			}
@@ -79,13 +109,33 @@ export const Attached: React.FC = () => {
 	};
 
 	const onSubmit = () => {
-		console.log(changedTeacher, changedDiscipline);
+		if (changedDiscipline && changedTeacher) {
+			(async () => {
+				const founded = attached.find((el) => el.discipline.id === changedDiscipline.id);
+				if (!founded) {
+					await axios.post(`http://localhost:5000/group/${groupId}`, {
+						disciplineId: changedDiscipline.id,
+						teacherId: changedTeacher.id,
+					});
+					setAttached([
+						...attached,
+						{
+							teacher: changedTeacher,
+							discipline: changedDiscipline,
+						},
+					]);
+					console.log(attached);
+				}
+			})();
+		}
 	};
+	console.log(attached);
 
 	const DemoPaper = styled(Paper)(({ theme }) => ({
 		padding: theme.spacing(2),
 		...theme.typography.body2,
 		textAlign: "center",
+		marginBottom: "10px",
 	}));
 
 	return (
@@ -93,9 +143,7 @@ export const Attached: React.FC = () => {
 			<Header title="Дисциплины группы" />
 			<Container>
 				<GroupItem group={group} />
-				<div className={classes.buttonWrapper}>
-					<Button variant="contained">Прикрепить дисциплину</Button>
-				</div>
+
 				<div>
 					<DemoPaper variant="elevation">
 						<FormControl fullWidth>
@@ -110,31 +158,37 @@ export const Attached: React.FC = () => {
 							>
 								{teachers.map((option) => (
 									<MenuItem key={option.id} value={option.id}>
-										{option.surname}
+										{option.surname} {option.name} {option.patronimyc}
 									</MenuItem>
 								))}
 							</TextField>
-							{!!disciplinesOfTeacher.length && (
-								<TextField
-									style={{ marginBottom: 30 }}
-									onChange={handleChange2}
-									id="outlined-select-currency"
-									select
-									label="Дисциплина"
-									defaultValue=""
-									value={changedDiscipline && changedDiscipline.id}
-								>
-									{disciplinesOfTeacher.map((option) => (
-										<MenuItem key={option.id} value={option.id}>
-											{option.name}
-										</MenuItem>
-									))}
-								</TextField>
-							)}
+
+							<TextField
+								style={{ marginBottom: 30 }}
+								onChange={handleChange2}
+								id="outlined-select-currency"
+								select
+								label="Дисциплина"
+								defaultValue=""
+								value={changedDiscipline && changedDiscipline.id}
+							>
+								{disciplinesOfTeacher.map((option) => (
+									<MenuItem key={option.id} value={option.id}>
+										{option.name}
+									</MenuItem>
+								))}
+							</TextField>
 							<Button variant="outlined" onClick={onSubmit}>
-								сохранить
+								Прикрепить
 							</Button>
 						</FormControl>
+					</DemoPaper>
+				</div>
+				<div className={classes.attachedWrapper}>
+					<DemoPaper variant="elevation">
+						{attached.map((el) => (
+							<AttachedItem key={el.discipline.id} disAndTeach={el} />
+						))}
 					</DemoPaper>
 				</div>
 			</Container>
