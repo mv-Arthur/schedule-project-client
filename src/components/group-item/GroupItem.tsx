@@ -10,10 +10,10 @@ import { GroupType } from "../../pages/group/Group";
 import { GroupForm } from "../group-form/GroupForm";
 
 type GroupItemPropsType = {
-	deleteGroup: (groupId: number) => void;
+	deleteGroup?: (groupId: number) => void;
 	group: GroupType;
 	full?: boolean;
-	editGroup: (modifyGroup: GroupType) => void;
+	editGroup?: (modifyGroup: GroupType) => void;
 };
 
 export const GroupItem: React.FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
@@ -27,7 +27,7 @@ export const GroupItem: React.FC<GroupItemPropsType> = (props: GroupItemPropsTyp
 	};
 
 	const onDelete = () => {
-		props.deleteGroup(props.group.id);
+		props.deleteGroup && props.deleteGroup(props.group.id);
 	};
 
 	return (
@@ -63,7 +63,7 @@ export const GroupItem: React.FC<GroupItemPropsType> = (props: GroupItemPropsTyp
 							<button onClick={onPopup}>
 								<img src={closeIcon} alt="close" />
 							</button>
-							<NavLink to={``}>
+							<NavLink to={`/group/${props.group.id}`}>
 								<img src={showMoreIcon} alt="show more" />
 							</NavLink>
 						</div>

@@ -3,6 +3,7 @@ import { Teachers } from "./pages/teachers/Teachers";
 import { Route, Routes } from "react-router-dom";
 import { Discipline } from "./pages/discipline/Discipline";
 import { Group } from "./pages/group/Group";
+import { Attached } from "./pages/attached/Attached";
 
 function App() {
 	return (
@@ -12,6 +13,7 @@ function App() {
 				<Route path={"/teacher"} element={<Teachers />} />
 				<Route path={"/discipline/:id"} element={<Discipline />} />
 				<Route path={"/group"} element={<Group />} />
+				<Route path={"/group/:id"} element={<Attached />} />
 			</Routes>
 		</div>
 	);
