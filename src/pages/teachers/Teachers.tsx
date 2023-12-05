@@ -6,6 +6,9 @@ import { CustomForm, Inputs } from "../../components/form/CustomForm";
 import axios from "axios";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import Container from "@mui/material/Container";
+import Snackbar from "@mui/material/Snackbar";
+import Alert, { AlertProps } from "@mui/material/Alert";
+
 export type TeacherType = {
 	id: number;
 	name: string;
@@ -16,6 +19,8 @@ export type TeacherType = {
 export const Teachers: React.FC = () => {
 	const [teachers, setTeachers] = React.useState<TeacherType[]>([]);
 	const [parent] = useAutoAnimate();
+	const [snackbar, setSnackbar] = React.useState<Pick<AlertProps, "children" | "severity"> | null>(null);
+
 	React.useEffect(() => {
 		(async () => {
 			try {
@@ -23,6 +28,7 @@ export const Teachers: React.FC = () => {
 				setTeachers([...data].reverse());
 			} catch (err) {
 				console.log(err);
+				setSnackbar({ children: `Непредвиденная ошибка: ${err.message}`, severity: "error" });
 			}
 		})();
 	}, []);
@@ -33,8 +39,10 @@ export const Teachers: React.FC = () => {
 				...formData,
 			});
 			setTeachers([fetchingData.data, ...teachers]);
+			setSnackbar({ children: "Преподаватель успешно добавлен", severity: "success" });
 		} catch (err) {
 			console.log(err);
+			setSnackbar({ children: `Непредвиденная ошибка: ${err.message}`, severity: "error" });
 		}
 	};
 
@@ -42,8 +50,10 @@ export const Teachers: React.FC = () => {
 		try {
 			await axios.delete(`http://localhost:5000/teacher/${teacherId}`);
 			setTeachers(teachers.filter((el) => el.id !== teacherId));
+			setSnackbar({ children: "Преподаватель успешно удален", severity: "success" });
 		} catch (err) {
 			console.log(err);
+			setSnackbar({ children: `Непредвиденная ошибка: ${err.message}`, severity: "error" });
 		}
 	};
 
@@ -51,11 +61,13 @@ export const Teachers: React.FC = () => {
 		try {
 			await axios.put(`http://localhost:5000/teacher/${teacherId}`, { ...updatedData });
 			setTeachers(teachers.map((el) => (el.id === teacherId ? { ...updatedData } : el)));
+			setSnackbar({ children: "Преподаватель успешно отредактирован", severity: "success" });
 		} catch (err) {
 			console.log(err);
+			setSnackbar({ children: `Непредвиденная ошибка: ${err.message}`, severity: "error" });
 		}
 	};
-
+	const handleCloseSnackbar = () => setSnackbar(null);
 	return (
 		<div className={classes.teachersGl}>
 			<Header title="Преподаватели" />
@@ -68,6 +80,11 @@ export const Teachers: React.FC = () => {
 						})}
 					</div>
 				</div>
+				{!!snackbar && (
+					<Snackbar open anchorOrigin={{ vertical: "bottom", horizontal: "center" }} onClose={handleCloseSnackbar} autoHideDuration={6000}>
+						<Alert {...snackbar} onClose={handleCloseSnackbar} />
+					</Snackbar>
+				)}
 			</Container>
 		</div>
 	);

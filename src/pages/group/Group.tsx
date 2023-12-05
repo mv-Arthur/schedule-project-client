@@ -6,6 +6,8 @@ import { GroupItem } from "../../components/group-item/GroupItem";
 import classes from "./group.module.css";
 import axios from "axios";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import Snackbar from "@mui/material/Snackbar";
+import Alert, { AlertProps } from "@mui/material/Alert";
 export interface GroupType {
 	id: number;
 	groupNumber: string;
@@ -16,6 +18,8 @@ export type groupCreationAttrs = Omit<GroupType, "id">;
 export const Group: React.FC = () => {
 	const [group, setGroup] = React.useState<GroupType[]>([]);
 	const [parent] = useAutoAnimate();
+	const [snackbar, setSnackbar] = React.useState<Pick<AlertProps, "children" | "severity"> | null>(null);
+
 	React.useEffect(() => {
 		(async () => {
 			try {
@@ -23,6 +27,7 @@ export const Group: React.FC = () => {
 				setGroup(response.reverse());
 			} catch (err) {
 				console.log(err);
+				setSnackbar({ children: `Непредвиденная ошибка: ${err.message}`, severity: "error" });
 			}
 		})();
 	}, []);
@@ -31,8 +36,10 @@ export const Group: React.FC = () => {
 		try {
 			const postedGroup = (await axios.post("http://localhost:5000/group", newGroup)).data;
 			setGroup([postedGroup, ...group]);
+			setSnackbar({ children: "Группа успешно добавлена", severity: "success" });
 		} catch (err) {
 			console.log(err);
+			setSnackbar({ children: `Непредвиденная ошибка: ${err.message}`, severity: "error" });
 		}
 	};
 
@@ -40,8 +47,10 @@ export const Group: React.FC = () => {
 		try {
 			await axios.delete(`http://localhost:5000/group/${groupId}`);
 			setGroup(group.filter((el) => el.id !== groupId));
+			setSnackbar({ children: "Группа успешно удалена", severity: "success" });
 		} catch (err) {
 			console.log(err);
+			setSnackbar({ children: `Непредвиденная ошибка: ${err.message}`, severity: "error" });
 		}
 	};
 
@@ -49,11 +58,13 @@ export const Group: React.FC = () => {
 		try {
 			axios.put(`http://localhost:5000/group/${modifyGroup.id}`, modifyGroup);
 			setGroup(group.map((el) => (el.id === modifyGroup.id ? { ...modifyGroup } : el)));
+			setSnackbar({ children: "Преподаватель успешно редактирована", severity: "success" });
 		} catch (err) {
 			console.log(err);
+			setSnackbar({ children: `Непредвиденная ошибка: ${err.message}`, severity: "error" });
 		}
 	};
-
+	const handleCloseSnackbar = () => setSnackbar(null);
 	return (
 		<>
 			<Header title="Группы" />
@@ -64,6 +75,11 @@ export const Group: React.FC = () => {
 						return <GroupItem editGroup={editGroup} group={el} key={el.id} full deleteGroup={deleteGroup} />;
 					})}
 				</div>
+				{!!snackbar && (
+					<Snackbar open anchorOrigin={{ vertical: "bottom", horizontal: "center" }} onClose={handleCloseSnackbar} autoHideDuration={6000}>
+						<Alert {...snackbar} onClose={handleCloseSnackbar} />
+					</Snackbar>
+				)}
 			</Container>
 		</>
 	);

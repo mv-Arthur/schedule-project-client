@@ -43,34 +43,14 @@ export const Attached: React.FC = () => {
 	const [changedTeacher, setChangedTeacher] = React.useState<TeacherType>();
 	const [disciplinesOfTeacher, setDisciplinesOfTeacher] = React.useState<DisciplineType[]>([]);
 	const [changedDiscipline, setChangedDiscipline] = React.useState<DisciplineType>();
-	const [attached, setAttached] = React.useState<AttachedType[]>([
-		// {
-		// 	teacher: {
-		// 		id: 1,
-		// 		name: "",
-		// 		surname: "",
-		// 		patronimyc: "",
-		// 	},
-		// 	discipline: {
-		// 		allHours: 1,
-		// 		attachedDisciplineId: 1,
-		// 		hoursQtyFirstSemester: 1,
-		// 		hoursQtySecondSemester: 1,
-		// 		id: 1,
-		// 		name: "",
-		// 		teacherId: 1,
-		// 		weeklyLoadFirstWeek: 1,
-		// 		weeklyLoadSecondWeek: 1,
-		// 	},
-		// },
-	]);
+	const [attached, setAttached] = React.useState<AttachedType[]>([]);
 	const groupId = useParams().id;
 	React.useEffect(() => {
 		(async () => {
 			try {
 				const data = (await axios.get(`http://localhost:5000/group/${groupId}`)).data;
-				console.log(data);
-				// setAttached([...attached, ...data.disciplines]);
+				console.log(data.disciplines);
+				setAttached([...attached, ...data.disciplines]);
 				setGroup(data);
 			} catch (err) {
 				console.log(err);
@@ -124,12 +104,12 @@ export const Attached: React.FC = () => {
 							discipline: changedDiscipline,
 						},
 					]);
-					console.log(attached);
+				} else {
+					alert("Элемент уже есть в списке");
 				}
 			})();
 		}
 	};
-	console.log(attached);
 
 	const DemoPaper = styled(Paper)(({ theme }) => ({
 		padding: theme.spacing(2),

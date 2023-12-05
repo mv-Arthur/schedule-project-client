@@ -45,13 +45,11 @@ function EditToolbar(props: EditToolbarProps) {
 			name: "",
 			hoursQtyFirstSemester: 0,
 			hoursQtySecondSemester: 0,
-
 			weeklyLoadSecondWeek: 0,
 			weeklyLoadFirstWeek: 0,
 		});
 
 		const id = newDiscipline.data.id;
-		console.log(id);
 
 		setRows((oldRows) => {
 			return [
@@ -159,7 +157,7 @@ export const Discipline = () => {
 
 	const processRowUpdate = async (newRow: GridRowModel) => {
 		await axios.put(`http://localhost:5000/discipline/${newRow.id}`, newRow);
-		setSnackbar({ children: "User successfully saved", severity: "success" });
+		setSnackbar({ children: "дисциплина успешно добавлена", severity: "success" });
 		const d = (await axios.get(`http://localhost:5000/discipline/${dynamicParam.id}/${newRow.id}`)).data;
 		const updatedRow = { ...d, isNew: false };
 		setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
@@ -172,7 +170,8 @@ export const Discipline = () => {
 
 	const handleCloseSnackbar = () => setSnackbar(null);
 	const handleProcessRowUpdateError = React.useCallback((error: Error) => {
-		setSnackbar({ children: error.message, severity: "error" });
+		console.log(error);
+		setSnackbar({ children: "Внимание! заполните все поля", severity: "error" });
 	}, []);
 
 	const columns: GridColDef[] = [
