@@ -19,12 +19,13 @@ export const Group: React.FC = () => {
 	const [group, setGroup] = React.useState<GroupType[]>([]);
 	const [parent] = useAutoAnimate();
 	const [snackbar, setSnackbar] = React.useState<Pick<AlertProps, "children" | "severity"> | null>(null);
-
+	const [searchedGroup, setSearchedGroup] = React.useState<GroupType[]>([]);
 	React.useEffect(() => {
 		(async () => {
 			try {
 				const response: GroupType[] = (await axios.get("http://localhost:5000/group")).data;
 				setGroup(response.reverse());
+				setSearchedGroup(response.reverse());
 			} catch (err) {
 				console.log(err);
 				setSnackbar({ children: `Непредвиденная ошибка: ${err.message}`, severity: "error" });
@@ -35,6 +36,7 @@ export const Group: React.FC = () => {
 	const addGroup = async (newGroup: groupCreationAttrs) => {
 		try {
 			const postedGroup = (await axios.post("http://localhost:5000/group", newGroup)).data;
+			setSearchedGroup([postedGroup, ...group]);
 			setGroup([postedGroup, ...group]);
 			setSnackbar({ children: "Группа успешно добавлена", severity: "success" });
 		} catch (err) {
@@ -46,6 +48,7 @@ export const Group: React.FC = () => {
 	const deleteGroup = async (groupId: number) => {
 		try {
 			await axios.delete(`http://localhost:5000/group/${groupId}`);
+			setSearchedGroup(group.filter((el) => el.id !== groupId));
 			setGroup(group.filter((el) => el.id !== groupId));
 			setSnackbar({ children: "Группа успешно удалена", severity: "success" });
 		} catch (err) {
@@ -57,6 +60,7 @@ export const Group: React.FC = () => {
 	const editGroup = async (modifyGroup: GroupType) => {
 		try {
 			axios.put(`http://localhost:5000/group/${modifyGroup.id}`, modifyGroup);
+			setSearchedGroup(group.map((el) => (el.id === modifyGroup.id ? { ...modifyGroup } : el)));
 			setGroup(group.map((el) => (el.id === modifyGroup.id ? { ...modifyGroup } : el)));
 			setSnackbar({ children: "Преподаватель успешно редактирована", severity: "success" });
 		} catch (err) {
@@ -64,14 +68,19 @@ export const Group: React.FC = () => {
 			setSnackbar({ children: `Непредвиденная ошибка: ${err.message}`, severity: "error" });
 		}
 	};
+
+	const onSearch = (value: string) => {
+		setSearchedGroup(group.filter((el) => el.groupNumber.toLowerCase().includes(value)));
+	};
+
 	const handleCloseSnackbar = () => setSnackbar(null);
 	return (
 		<>
 			<Header title="Группы" />
 			<Container>
-				<GroupForm addGroup={addGroup} />
+				<GroupForm onSearch={onSearch} addGroup={addGroup} />
 				<div className={classes.itemWrapper} ref={parent}>
-					{group.map((el) => {
+					{searchedGroup.map((el) => {
 						return <GroupItem editGroup={editGroup} group={el} key={el.id} full deleteGroup={deleteGroup} />;
 					})}
 				</div>

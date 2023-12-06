@@ -20,12 +20,13 @@ export const Teachers: React.FC = () => {
 	const [teachers, setTeachers] = React.useState<TeacherType[]>([]);
 	const [parent] = useAutoAnimate();
 	const [snackbar, setSnackbar] = React.useState<Pick<AlertProps, "children" | "severity"> | null>(null);
-
+	const [searchedTeachers, setSearchedTeachers] = React.useState<TeacherType[]>([]);
 	React.useEffect(() => {
 		(async () => {
 			try {
 				const data: TeacherType[] = (await axios.get("http://localhost:5000/teacher")).data;
 				setTeachers([...data].reverse());
+				setSearchedTeachers([...data].reverse());
 			} catch (err) {
 				console.log(err);
 				setSnackbar({ children: `Непредвиденная ошибка: ${err.message}`, severity: "error" });
@@ -38,6 +39,7 @@ export const Teachers: React.FC = () => {
 			const fetchingData = await axios.post("http://localhost:5000/teacher", {
 				...formData,
 			});
+			setSearchedTeachers([fetchingData.data, ...teachers]);
 			setTeachers([fetchingData.data, ...teachers]);
 			setSnackbar({ children: "Преподаватель успешно добавлен", severity: "success" });
 		} catch (err) {
@@ -49,6 +51,7 @@ export const Teachers: React.FC = () => {
 	const deleteTeacherCB = async (teacherId: number) => {
 		try {
 			await axios.delete(`http://localhost:5000/teacher/${teacherId}`);
+			setSearchedTeachers(teachers.filter((el) => el.id !== teacherId));
 			setTeachers(teachers.filter((el) => el.id !== teacherId));
 			setSnackbar({ children: "Преподаватель успешно удален", severity: "success" });
 		} catch (err) {
@@ -60,6 +63,7 @@ export const Teachers: React.FC = () => {
 	const editTeacherCB = async (teacherId: number, updatedData: TeacherType) => {
 		try {
 			await axios.put(`http://localhost:5000/teacher/${teacherId}`, { ...updatedData });
+			setSearchedTeachers(teachers.map((el) => (el.id === teacherId ? { ...updatedData } : el)));
 			setTeachers(teachers.map((el) => (el.id === teacherId ? { ...updatedData } : el)));
 			setSnackbar({ children: "Преподаватель успешно отредактирован", severity: "success" });
 		} catch (err) {
@@ -67,15 +71,19 @@ export const Teachers: React.FC = () => {
 			setSnackbar({ children: `Непредвиденная ошибка: ${err.message}`, severity: "error" });
 		}
 	};
+
+	const onSearch = (inputValue: string) => {
+		setSearchedTeachers(teachers.filter((el) => el.surname.toLowerCase().includes(inputValue.toLowerCase())));
+	};
 	const handleCloseSnackbar = () => setSnackbar(null);
 	return (
 		<div className={classes.teachersGl}>
 			<Header title="Преподаватели" />
 			<Container>
-				<CustomForm setTeachersFromCB={setTeachersFromCB} />
+				<CustomForm setTeachersFromCB={setTeachersFromCB} onSearch={onSearch} />
 				<div className={classes.teachersArea}>
 					<div className={classes.itemWrapper} ref={parent}>
-						{teachers.map((el) => {
+						{searchedTeachers.map((el) => {
 							return <TeacherItem full key={el.id} teacher={el} deleteTeacherCB={deleteTeacherCB} editTeacherCB={editTeacherCB} />;
 						})}
 					</div>

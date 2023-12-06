@@ -16,6 +16,7 @@ type GroupFormPropsType = {
 	editGroup?: (modifyGroup: GroupType) => void;
 	group?: GroupType;
 	setShow?: React.Dispatch<React.SetStateAction<boolean>>;
+	onSearch?: (value: string) => void;
 };
 export const GroupForm: React.FC<GroupFormPropsType> = (props: GroupFormPropsType) => {
 	const {
@@ -31,6 +32,13 @@ export const GroupForm: React.FC<GroupFormPropsType> = (props: GroupFormPropsTyp
 			nameOfSpec: "",
 		},
 	});
+	const [inputValue, setInputValue] = React.useState("");
+	React.useEffect(() => {
+		if (props.onSearch) {
+			props.onSearch(inputValue);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [inputValue]);
 
 	React.useEffect(() => {
 		if (props.editGroup && props.group) {
@@ -78,9 +86,20 @@ export const GroupForm: React.FC<GroupFormPropsType> = (props: GroupFormPropsTyp
 				label={errors.nameOfSpec ? "поле обязательное для заполнения" : "Наименование специальности"}
 				variant="outlined"
 			/>
+
 			<Button type="submit" variant="contained">
 				{props.editGroup ? "редактировать" : "добавить"}
 			</Button>
+			{!props.editGroup && (
+				<TextField
+					value={inputValue}
+					onChange={(e) => setInputValue(e.currentTarget.value)}
+					id="standard-basic"
+					label="Найти..."
+					variant="standard"
+					helperText="введите номер группы"
+				/>
+			)}
 		</form>
 	);
 };

@@ -14,7 +14,9 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import { AttachedItem } from "../../components/attachedItem/AttachedItem";
-
+import Snackbar from "@mui/material/Snackbar";
+import Alert, { AlertProps } from "@mui/material/Alert";
+import { SearchBar } from "./SearchBar";
 type DisciplineType = {
 	allHours: number;
 	attachedDisciplineId: number;
@@ -45,13 +47,17 @@ export const Attached: React.FC = () => {
 	const [disciplinesOfTeacher, setDisciplinesOfTeacher] = React.useState<DisciplineType[]>([]);
 	const [changedDiscipline, setChangedDiscipline] = React.useState<DisciplineType>();
 	const [attached, setAttached] = React.useState<AttachedType[]>([]);
+	const [snackbar, setSnackbar] = React.useState<Pick<AlertProps, "children" | "severity"> | null>(null);
+	const [searchedAttached, setSearchedAttached] = React.useState<AttachedType[]>([]);
 	const groupId = useParams().id;
+
 	React.useEffect(() => {
 		(async () => {
 			try {
 				const data = (await axios.get(`http://localhost:5000/group/${groupId}`)).data;
 				console.log(data.disciplines);
 				setAttached([...attached, ...data.disciplines]);
+				setSearchedAttached([...attached, ...data.disciplines]);
 				setGroup(data);
 			} catch (err) {
 				console.log(err);
@@ -92,7 +98,10 @@ export const Attached: React.FC = () => {
 	const onSubmit = () => {
 		if (changedDiscipline && changedTeacher) {
 			(async () => {
-				const founded = attached.find((el) => el.discipline.id === changedDiscipline.id);
+				const founded = attached.find((el) => {
+					return el.discipline.name === changedDiscipline.name;
+				});
+
 				if (!founded) {
 					const attachedThis: AttachedType = (
 						await axios.post(`http://localhost:5000/group/${groupId}`, {
@@ -102,8 +111,10 @@ export const Attached: React.FC = () => {
 					).data;
 
 					setAttached([...attached, attachedThis]);
+					setSearchedAttached([...attached, attachedThis]);
+					setSnackbar({ children: "Дисциплина успешно прикреплена", severity: "success" });
 				} else {
-					alert("Элемент уже есть в списке");
+					setSnackbar({ children: "элемент уже есть в списке", severity: "error" });
 				}
 			})();
 		}
@@ -115,7 +126,20 @@ export const Attached: React.FC = () => {
 		textAlign: "center",
 		marginBottom: "10px",
 	}));
-
+	const onDelete = async (id: number) => {
+		try {
+			await axios.delete(`http://localhost:5000/group/attached/${id}`);
+			setAttached(attached.filter((el) => el.id !== id));
+			setSearchedAttached(attached.filter((el) => el.id !== id));
+			setSnackbar({ children: "группа успешно откреплена", severity: "success" });
+		} catch (err) {
+			setSnackbar({ children: `Непредвиденная ошибка: ${err.message}`, severity: "error" });
+		}
+	};
+	const onSearch = (value: string) => {
+		setSearchedAttached(attached.filter((el) => el.discipline.name.toLowerCase().includes(value.toLowerCase())));
+	};
+	const handleCloseSnackbar = () => setSnackbar(null);
 	return (
 		<>
 			<Header title="Дисциплины группы" />
@@ -156,19 +180,23 @@ export const Attached: React.FC = () => {
 									</MenuItem>
 								))}
 							</TextField>
-							<Button variant="outlined" onClick={onSubmit}>
+							<Button variant="outlined" onClick={onSubmit} style={{ width: 300 }}>
 								Прикрепить
 							</Button>
 						</FormControl>
 					</DemoPaper>
 				</div>
+				<SearchBar onSearch={onSearch} />
 				<div className={classes.attachedWrapper}>
-					<DemoPaper variant="elevation">
-						{attached.map((el) => (
-							<AttachedItem key={el.id} disAndTeach={el} />
-						))}
-					</DemoPaper>
+					{searchedAttached.map((el) => (
+						<AttachedItem onDeleteCb={onDelete} key={el.id} disAndTeach={el} />
+					))}
 				</div>
+				{!!snackbar && (
+					<Snackbar open anchorOrigin={{ vertical: "bottom", horizontal: "center" }} onClose={handleCloseSnackbar} autoHideDuration={6000}>
+						<Alert {...snackbar} onClose={handleCloseSnackbar} />
+					</Snackbar>
+				)}
 			</Container>
 		</>
 	);

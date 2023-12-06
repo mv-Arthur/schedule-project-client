@@ -15,6 +15,7 @@ type CustomFormPropsType = {
 	editTeachersFromCB?: (teacherId: number, updatedData: TeacherType) => void;
 	teacher?: TeacherType;
 	onShow?: () => void;
+	onSearch?: (value: string) => void;
 };
 
 export const CustomForm: React.FC<CustomFormPropsType> = (props: CustomFormPropsType) => {
@@ -31,6 +32,7 @@ export const CustomForm: React.FC<CustomFormPropsType> = (props: CustomFormProps
 			patronimyc: "",
 		},
 	});
+	const [inputValue, setInputValue] = React.useState("");
 
 	React.useEffect(() => {
 		if (props.teacher && props.editTeachersFromCB) {
@@ -40,6 +42,13 @@ export const CustomForm: React.FC<CustomFormPropsType> = (props: CustomFormProps
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	React.useEffect(() => {
+		if (props.onSearch) {
+			props.onSearch(inputValue);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [inputValue]);
 
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		if (props.setTeachersFromCB) {
@@ -78,6 +87,16 @@ export const CustomForm: React.FC<CustomFormPropsType> = (props: CustomFormProps
 			<Button type="submit" variant="contained">
 				{props.setTeachersFromCB ? "создать" : "редактировать"}
 			</Button>
+			{props.setTeachersFromCB && (
+				<TextField
+					value={inputValue}
+					onChange={(e) => setInputValue(e.currentTarget.value)}
+					id="standard-basic"
+					label="Найти..."
+					variant="standard"
+					helperText="введите фамилию"
+				/>
+			)}
 		</form>
 	);
 };
