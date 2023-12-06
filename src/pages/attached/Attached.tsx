@@ -28,6 +28,7 @@ type DisciplineType = {
 };
 
 export type AttachedType = {
+	id: number;
 	discipline: DisciplineType;
 	teacher: TeacherType;
 };
@@ -93,17 +94,14 @@ export const Attached: React.FC = () => {
 			(async () => {
 				const founded = attached.find((el) => el.discipline.id === changedDiscipline.id);
 				if (!founded) {
-					await axios.post(`http://localhost:5000/group/${groupId}`, {
-						disciplineId: changedDiscipline.id,
-						teacherId: changedTeacher.id,
-					});
-					setAttached([
-						...attached,
-						{
-							teacher: changedTeacher,
-							discipline: changedDiscipline,
-						},
-					]);
+					const attachedThis: AttachedType = (
+						await axios.post(`http://localhost:5000/group/${groupId}`, {
+							disciplineId: changedDiscipline.id,
+							teacherId: changedTeacher.id,
+						})
+					).data;
+
+					setAttached([...attached, attachedThis]);
 				} else {
 					alert("Элемент уже есть в списке");
 				}
@@ -167,7 +165,7 @@ export const Attached: React.FC = () => {
 				<div className={classes.attachedWrapper}>
 					<DemoPaper variant="elevation">
 						{attached.map((el) => (
-							<AttachedItem key={el.discipline.id} disAndTeach={el} />
+							<AttachedItem key={el.id} disAndTeach={el} />
 						))}
 					</DemoPaper>
 				</div>
