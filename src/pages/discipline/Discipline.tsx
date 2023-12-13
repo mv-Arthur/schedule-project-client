@@ -15,6 +15,7 @@ import {
 	GridRowModesModel,
 	GridRowModes,
 	DataGrid,
+	GridToolbarExport,
 	GridColDef,
 	GridToolbarContainer,
 	GridActionsCellItem,
@@ -84,6 +85,7 @@ function EditToolbar(props: EditToolbarProps) {
 			<Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
 				Добавить
 			</Button>
+			<GridToolbarExport />
 		</GridToolbarContainer>
 	);
 }
